@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Boletos Vera</string>
+    <string name="title_activity_camera">CameraActivity</string>
+    <string name="bienvenido">Bienvenido</string>
+    <string name="invalido">Invalido</string>
+
+    <string name="ids">ids</string>
+
+</resources>
