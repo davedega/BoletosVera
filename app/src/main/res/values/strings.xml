@@ -5,5 +5,10 @@
     <string name="invalido">Invalido</string>
 
     <string name="ids">ids</string>
+    <string name="boletos">Boletos</string>
+
+    <string name="scanned_tickets_">Escaneados</string>
+    <string name="left_tickets">Disponibles</string>
+    <string name="zero">0</string>
 
 </resources>

@@ -22,11 +22,11 @@ class VeraPresenter(var context: Context, var view: ContractVera.View) : Contrac
     private val LAUNCH_CAMERA = 2
 
 
-    private lateinit var list: ArrayList<String>
+    private lateinit var idsList: ArrayList<String>
 
 
-    override fun onScannPRessed() {
-        // Check camera permission and launch camera if grant
+    override fun onScannPressed() {
+
         val cameraPermission = ContextCompat.checkSelfPermission(context,
                 Manifest.permission.CAMERA)
         if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
@@ -43,18 +43,21 @@ class VeraPresenter(var context: Context, var view: ContractVera.View) : Contrac
     }
 
     override fun initializeTickets() {
-        val arrayIds = this.loadIds()
+        val arrayIds = this.loadIdsFromPrefs()
         if (arrayIds != null && !arrayIds[0].equals("")) {
-            list = arrayIds as ArrayList<String>
-            Log.e("VERA", "CARGADOS DE MEMORIA")
+            idsList = arrayIds as ArrayList<String>
+            view.displayLeftAndScannedTickets(idsList.size)
+            Log.e("VERA", "CARGADOS DE MEMORIA " + idsList.size)
         } else {
-            Log.e("VERA", "CARGADOS DE ARCHIVO")
             readFile()
+            view.displayLeftAndScannedTickets(idsList.size)
+
+            Log.e("VERA", "CARGADOS DE ARCHIVO " + idsList.size)
         }
     }
 
     override fun saveCurrentStatus() {
-        idsToStringAndSave(list)
+        idsToStringAndSave(idsList)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -85,43 +88,53 @@ class VeraPresenter(var context: Context, var view: ContractVera.View) : Contrac
         (context as Activity).startActivityForResult(intent, LAUNCH_CAMERA)
     }
 
-    override fun readFile() {
+    private fun readFile() {
         try {
             val inputStream: InputStream = context.assets.open("ids.json")
             val inputString = inputStream.bufferedReader().use { it.readText() }
 
             val jsonArray = JSONArray(inputString)
 
-            list = ArrayList<String>()
+            idsList = ArrayList<String>()
 
             for (i in 0 until jsonArray.length()) {
-                list.add(jsonArray[i] as String)
+                idsList.add(jsonArray[i] as String)
             }
         } catch (e: Exception) {
             Log.e("READ", e.toString())
         }
     }
 
-    override fun idsToStringAndSave(ids: ArrayList<String>) {
+    private fun idsToStringAndSave(ids: ArrayList<String>) {
         val sb = StringBuilder()
         for (i in 0 until ids.size) {
-            sb.append(ids[i]).append(",")
+            if (ids[i] != "") {
+                // If last item do not append comma
+                if (i == ids.size - 1) {
+                    sb.append(ids[i])
+                } else {
+                    sb.append(ids[i]).append(",")
+                }
+            }
         }
         save(sb.toString())
     }
 
     override fun checkId(id: String) {
-        if (list.contains(id)) {
+        if (idsList.contains(id)) {
             view.showGreenScreen()
-            list.remove(id)
+            idsList.remove(id)
         } else {
             view.showRedScreen()
         }
         val timer = Timer()
         timer.schedule(timerTask {
             (context as Activity).runOnUiThread(Runnable
-            { view.resetScreen() })
-        }, 2000)
+            {
+                view.resetScreen()
+                view.displayLeftAndScannedTickets(idsList.size)
+            })
+        }, 500)
     }
 
     override fun save(stringIds: String) {
@@ -133,11 +146,16 @@ class VeraPresenter(var context: Context, var view: ContractVera.View) : Contrac
         }
     }
 
-    override fun loadIds(): List<String>? {
+    override fun loadIdsFromPrefs(): List<String>? {
         val sharedPref = context.getSharedPreferences(context.getString(R.string.ids),
                 Context.MODE_PRIVATE)
-        val stringIds = sharedPref?.getString(context.getString(R.string.ids), "")
+        val stringIds = sharedPref?.getString(context.getString(R.string.ids), null)
         return stringIds?.split(",")
+    }
+
+    override fun showVersionCode(): Boolean {
+        Toast.makeText(context, "Versión: " + BuildConfig.VERSION_NAME + "\n git:davedega", Toast.LENGTH_SHORT).show()
+        return true
     }
 
 

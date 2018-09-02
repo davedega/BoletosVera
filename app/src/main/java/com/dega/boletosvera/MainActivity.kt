@@ -20,7 +20,10 @@ class MainActivity : AppCompatActivity(), ContractVera.View {
         presenter = VeraPresenter(context = this, view = this)
 
         scanBtn.setOnClickListener {
-            presenter.onScannPRessed()
+            presenter.onScannPressed()
+        }
+        scanBtn.setOnLongClickListener {
+            presenter.showVersionCode()
         }
 
         presenter.initializeTickets()
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity(), ContractVera.View {
 
     override fun showGreenScreen() {
         background.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.green))
+        statsContainer.visibility = View.GONE
         scanBtn.visibility = View.GONE
         result.visibility = View.VISIBLE
         result.text = getString(R.string.bienvenido)
@@ -52,6 +56,7 @@ class MainActivity : AppCompatActivity(), ContractVera.View {
 
     override fun showRedScreen() {
         background.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.red))
+        statsContainer.visibility = View.GONE
         scanBtn.visibility = View.GONE
         result.visibility = View.VISIBLE
         result.text = getString(R.string.invalido)
@@ -59,8 +64,15 @@ class MainActivity : AppCompatActivity(), ContractVera.View {
 
     override fun resetScreen() {
         background.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.white))
+        statsContainer.visibility = View.VISIBLE
         scanBtn.visibility = View.VISIBLE
         result.visibility = View.GONE
+    }
+
+    override fun displayLeftAndScannedTickets(size: Int) {
+        val scanned = 450 - size
+        leftTicketsTv.text = size.toString()
+        scannedTicketsTv.text = scanned.toString()
     }
 
 }
