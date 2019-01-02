@@ -102,6 +102,7 @@ class VeraPresenter(var context: Context, var view: ContractVera.View) : Contrac
             }
         } catch (e: Exception) {
             Log.e("READ", e.toString())
+
         }
     }
 

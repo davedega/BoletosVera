@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), ContractVera.View {
     }
 
     override fun resetScreen() {
-        background.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.white))
+        background.setBackgroundResource(R.drawable.gradient_vera)
         statsContainer.visibility = View.VISIBLE
         scanBtn.visibility = View.VISIBLE
         result.visibility = View.GONE
