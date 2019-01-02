@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/malibu</color>
-    <color name="colorPrimaryDark">@color/san_marino</color>
+    <color name="colorPrimary">#FFFF03F7 </color>
+    <color name="colorPrimaryDark">#FF1C0080</color>
     <color name="colorAccent">@color/drover</color>
 
     <color name="white">#FFFFFF</color>
